@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard – Les résistants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<main class="large">
+  <div class="entete">
+    <h1>Dashboard</h1>
+    <a href="index.html">Retour au questionnaire</a>
+  </div>
+
+  <div class="chiffres">
+    <div class="tract"><div class="gris">Participants</div><div class="gros" id="nb">–</div></div>
+    <div class="tract"><div class="gris">Score moyen</div><div class="gros" id="moy">–</div></div>
+    <div class="tract"><div class="gris">Meilleur score</div><div class="gros" id="best">–</div></div>
+  </div>
+
+  <div class="graphiques">
+    <div class="tract">
+      <h3>Répartition des scores</h3>
+      <div class="zone-graph"><canvas id="g-scores"></canvas></div>
+    </div>
+    <div class="tract">
+      <h3>Réussite par question (%)</h3>
+      <div class="zone-graph"><canvas id="g-questions"></canvas></div>
+    </div>
+  </div>
+
+  <div class="tract">
+    <h3>Classement</h3>
+    <p class="gris" id="vide" hidden>Personne n’a encore participé.</p>
+    <div class="tableau">
+      <table id="tableau" hidden>
+        <thead><tr><th>Rang</th><th>Prénom</th><th>Score</th><th>Date</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script>
+let g1, g2;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+async function charger(){
+  let d;
+  try {
+    d = await (await fetch("/api/stats")).json();
+  } catch { return; }
+
+  document.getElementById("nb").textContent = d.participants;
+  document.getElementById("moy").textContent = d.participants ? d.moyenne.toFixed(1) + " / " + d.total : "–";
+  document.getElementById("best").textContent = d.participants ? d.meilleur + " / " + d.total : "–";
+
+  Chart.defaults.color = css("--encre");
+  Chart.defaults.font.family = '"Source Serif 4", Georgia, serif';
+  const grille = { color: css("--trait") };
+  const options = (max, titreY) => ({
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, max, grid: grille, title: { display: !!titreY, text: titreY }, ticks: { precision: 0 } },
+      x: { grid: { display: false } }
+    }
+  });
+
+  if (g1) g1.destroy();
+  if (g2) g2.destroy();
+  g1 = new Chart(document.getElementById("g-scores"), {
+    type: "bar",
+    data: { labels: d.distribution.map((_, i) => i), datasets: [{ data: d.distribution, backgroundColor: css("--encre") }] },
+    options: options(undefined, "Participants")
+  });
+  g2 = new Chart(document.getElementById("g-questions"), {
+    type: "bar",
+    data: { labels: d.parQuestion.map((_, i) => "Q" + (i + 1)), datasets: [{ data: d.parQuestion, backgroundColor: css("--vert") }] },
+    options: options(100)
+  });
+
+  const corps = document.querySelector("#tableau tbody");
+  corps.innerHTML = "";
+  document.getElementById("vide").hidden = d.participants > 0;
+  document.getElementById("tableau").hidden = d.participants === 0;
+  d.classement.forEach((p, i) => {
+    const tr = document.createElement("tr");
+    const date = new Date(p.date.replace(" ", "T") + "Z").toLocaleDateString("fr-FR");
+    [i + 1, p.prenom, p.score + " / " + p.total, date].forEach(v => {
+      const td = document.createElement("td");
+      td.textContent = v;
+      tr.appendChild(td);
+    });
+    corps.appendChild(tr);
+  });
+}
+
+charger();
+setInterval(charger, 30000);
+</script>
+</body>
+</html>
