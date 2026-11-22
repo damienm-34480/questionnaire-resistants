@@ -1,9 +1,0 @@
-CREATE TABLE IF NOT EXISTS participants (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  prenom TEXT NOT NULL,
-  prenom_cle TEXT NOT NULL UNIQUE,
-  score INTEGER NOT NULL,
-  total INTEGER NOT NULL,
-  reussites TEXT NOT NULL,
-  cree_le TEXT NOT NULL DEFAULT (datetime('now'))
-);
