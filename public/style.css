@@ -59,3 +59,7 @@ body{
   }
   body:has(main.large){ justify-content: center; padding-right: 16px; }
 }
+.tract{
+  background: color-mix(in srgb, var(--papier) 82%, transparent);
+  backdrop-filter: blur(4px);
+}
