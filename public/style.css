@@ -46,3 +46,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 table{width:100%;border-collapse:collapse}
 th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--trait)}
 th{font-weight:600}
+body{
+  background: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)), url("fond.jpg") center / cover no-repeat;
+  background-attachment: fixed;
+}
