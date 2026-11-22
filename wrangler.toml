@@ -5,4 +5,4 @@ pages_build_output_dir = "./public"
 [[d1_databases]]
 binding = "DB"
 database_name = "resistants-db"
-database_id = "COLLE_ICI_TON_DATABASE_ID"
+database_id = "79e680fb-5ae0-4de1-8f41-96cc19370632"
