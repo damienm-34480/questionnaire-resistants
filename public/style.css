@@ -47,6 +47,15 @@ table{width:100%;border-collapse:collapse}
 th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--trait)}
 th{font-weight:600}
 body{
-  background: linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,.3)), url("fond.jpg") center / contain no-repeat #121b25;
+  background: linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url("fond.jpg") center / contain no-repeat #121b25;
   background-attachment: fixed;
+}
+@media (min-width: 1000px){
+  body{
+    background: url("fond.jpg") 12% center / auto 92vh no-repeat #121b25;
+    background-attachment: fixed;
+    justify-content: flex-end;
+    padding-right: 10vw;
+  }
+  body:has(main.large){ justify-content: center; padding-right: 16px; }
 }
